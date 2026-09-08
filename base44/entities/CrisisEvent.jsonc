@@ -1,0 +1,44 @@
+{
+  "name": "CrisisEvent",
+  "type": "object",
+  "properties": {
+    "date_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_seconds": {
+      "type": "number"
+    },
+    "heart_rate_avg": {
+      "type": "number"
+    },
+    "heart_rate_peak": {
+      "type": "number"
+    },
+    "movement_intensity": {
+      "type": "string",
+      "enum": [
+        "baixa",
+        "m\u00e9dia",
+        "alta"
+      ]
+    },
+    "intensity": {
+      "type": "string",
+      "enum": [
+        "leve",
+        "moderada",
+        "intensa"
+      ]
+    },
+    "location": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "date_time"
+  ]
+}

@@ -6,6 +6,12 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
+import Layout from '@/components/Layout';
+import Home from '@/pages/Home';
+import Graficos from '@/pages/Graficos';
+import PrimeirosSocorros from '@/pages/PrimeirosSocorros';
+import DadosPessoais from '@/pages/DadosPessoais';
+import Configuracao from '@/pages/Configuracao';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -34,7 +40,13 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/graficos" element={<Graficos />} />
+        <Route path="/primeiros-socorros" element={<PrimeirosSocorros />} />
+        <Route path="/dados-pessoais" element={<DadosPessoais />} />
+        <Route path="/configuracao" element={<Configuracao />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
