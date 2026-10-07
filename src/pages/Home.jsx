@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AlertTriangle, ChevronRight, Activity, Calendar, TrendingUp, Zap } from "lucide-react";
 import HeartRateMonitor from "@/components/HeartRateMonitor";
 import { useBracelet } from "@/components/BraceletStatus";
@@ -12,6 +12,7 @@ export default function Home() {
   const [crises, setCrises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [simulating, setSimulating] = useState(false);
+  const navigate = useNavigate();
 
   const load = useCallback(async () => {
     try {
@@ -25,6 +26,12 @@ export default function Home() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    base44.functions.invoke("getMyRole")
+      .then((r) => { if (r?.data?.role === "contact") navigate("/contato", { replace: true }); })
+      .catch(() => {});
+  }, [navigate]);
 
   const simulateCrisis = async () => {
     setSimulating(true);

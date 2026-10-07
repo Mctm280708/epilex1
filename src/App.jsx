@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -12,6 +12,12 @@ import Graficos from '@/pages/Graficos';
 import PrimeirosSocorros from '@/pages/PrimeirosSocorros';
 import DadosPessoais from '@/pages/DadosPessoais';
 import Configuracao from '@/pages/Configuracao';
+import ContatoDashboard from '@/pages/ContatoDashboard';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+import ProtectedRoute from '@/components/ProtectedRoute';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -40,12 +46,19 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/graficos" element={<Graficos />} />
-        <Route path="/primeiros-socorros" element={<PrimeirosSocorros />} />
-        <Route path="/dados-pessoais" element={<DadosPessoais />} />
-        <Route path="/configuracao" element={<Configuracao />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/graficos" element={<Graficos />} />
+          <Route path="/primeiros-socorros" element={<PrimeirosSocorros />} />
+          <Route path="/dados-pessoais" element={<DadosPessoais />} />
+          <Route path="/configuracao" element={<Configuracao />} />
+        </Route>
+        <Route path="/contato" element={<ContatoDashboard />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

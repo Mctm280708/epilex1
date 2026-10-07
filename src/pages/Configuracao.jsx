@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useBracelet } from "@/components/BraceletStatus";
-import { Plus, Trash2, Phone, User, Mail, X, Watch, Vibrate, ShieldAlert, Link2 } from "lucide-react";
+import { Plus, Trash2, Phone, User, Mail, X, Watch, Vibrate, ShieldAlert, Link2, LogOut, Copy, Check, RefreshCw } from "lucide-react";
 
 export default function Configuracao() {
   const { connected, toggle } = useBracelet();
@@ -38,7 +38,33 @@ export default function Configuracao() {
     localStorage.setItem("epilex_sens", v);
   };
 
-  const linkCode = "EPLX-" + (connected ? "7F3A9" : "----");
+  const [linkCode, setLinkCode] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    base44.functions.invoke("getMyRole")
+      .then((r) => { if (r?.data?.role === "patient" && r.data.link_code) setLinkCode(r.data.link_code); })
+      .catch(() => {});
+  }, []);
+
+  const regenerate = async () => {
+    setGenerating(true);
+    try {
+      const r = await base44.functions.invoke("generateLinkCode");
+      if (r?.data?.code) setLinkCode(r.data.code);
+    } catch (e) {} finally { setGenerating(false); }
+  };
+
+  const copyCode = () => {
+    if (!linkCode) return;
+    const fmt = linkCode.length === 6 ? linkCode.slice(0,3) + "-" + linkCode.slice(3) : linkCode;
+    navigator.clipboard?.writeText(fmt);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const formattedCode = linkCode ? (linkCode.length === 6 ? linkCode.slice(0,3) + "-" + linkCode.slice(3) : linkCode) : null;
 
   return (
     <div className="px-5 py-5">
@@ -73,10 +99,29 @@ export default function Configuracao() {
       </Section>
 
       <Section title="Código de vinculação" icon={Link2}>
-        <p className="text-xs text-muted-foreground">Compartilhe este código com contatos de emergência para que acessem seus dados.</p>
-        <div className="mt-2 flex items-center justify-between rounded-xl border border-dashed border-primary/40 bg-primary/5 px-4 py-3">
-          <span className="font-mono text-lg font-bold tracking-widest text-primary">{linkCode}</span>
-        </div>
+        <p className="text-xs text-muted-foreground">
+          Compartilhe este código com seu contato de emergência. Ao se cadastrar como "Contato de emergência" e inserir o código, ele terá acesso aos seus gráficos, histórico de crises, localização e dados de saúde.
+        </p>
+        {formattedCode ? (
+          <div className="mt-3">
+            <div className="flex items-center justify-between rounded-xl border border-dashed border-primary/40 bg-primary/5 px-4 py-3">
+              <span className="font-mono text-lg font-bold tracking-widest text-primary">{formattedCode}</span>
+              <div className="flex gap-1">
+                <button onClick={copyCode} className="flex h-8 w-8 items-center justify-center rounded-lg text-primary hover:bg-primary/10" aria-label="Copiar">
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </button>
+                <button onClick={regenerate} disabled={generating} className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted" aria-label="Gerar novo">
+                  <RefreshCw className={`h-4 w-4 ${generating ? "animate-spin" : ""}`} />
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <button onClick={regenerate} disabled={generating}
+            className="mt-3 w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-primary-foreground disabled:opacity-50">
+            {generating ? "Gerando..." : "Gerar código de vinculação"}
+          </button>
+        )}
       </Section>
 
       <Section title="Contatos de emergência" icon={Phone} action={
@@ -114,15 +159,10 @@ export default function Configuracao() {
 
       <Section title="Conta" icon={ShieldAlert}>
         <button
-          onClick={() => {
-            if (confirm("Deseja limpar seus dados pessoais locais?")) {
-              localStorage.removeItem("epilex_profile");
-              alert("Dados locais removidos.");
-            }
-          }}
-          className="w-full rounded-xl border border-destructive/30 bg-destructive/5 py-2.5 text-sm font-bold text-destructive"
+          onClick={() => base44.auth.logout(window.location.origin)}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-muted py-2.5 text-sm font-bold text-foreground"
         >
-          Limpar dados pessoais
+          <LogOut className="h-4 w-4" /> Sair da conta
         </button>
       </Section>
 

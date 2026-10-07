@@ -1,0 +1,114 @@
+{
+  "name": "MedicalProfile",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string"
+    },
+    "birth_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "blood_type": {
+      "type": "string",
+      "enum": [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-",
+        "Desconhecido"
+      ]
+    },
+    "weight": {
+      "type": "number"
+    },
+    "height": {
+      "type": "number"
+    },
+    "sedentary_level": {
+      "type": "string",
+      "enum": [
+        "sedentario",
+        "leve",
+        "moderado",
+        "ativo",
+        "muito_ativo"
+      ]
+    },
+    "has_disability": {
+      "type": "boolean"
+    },
+    "disability_desc": {
+      "type": "string"
+    },
+    "has_disorder": {
+      "type": "boolean"
+    },
+    "disorder_desc": {
+      "type": "string"
+    },
+    "medications": {
+      "type": "string"
+    },
+    "conditions": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "full_name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
