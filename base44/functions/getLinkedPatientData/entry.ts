@@ -17,7 +17,7 @@ export default async function(req) {
     const link = linkList[0];
     const mainUserId = link.created_by_id;
 
-    const [crisesRes, profilesRes] = await Promise.all([
+    const [crisesRes, profilesRes, alertsRes] = await Promise.all([
       base44.asServiceRole.entities.CrisisEvent.filter(
         { created_by_id: mainUserId },
         { sort: '-date_time', limit: 200 }
@@ -25,17 +25,23 @@ export default async function(req) {
       base44.asServiceRole.entities.MedicalProfile.filter(
         { created_by_id: mainUserId },
         { limit: 1 }
+      ),
+      base44.asServiceRole.entities.Alert.filter(
+        { created_by_id: mainUserId },
+        { sort: '-date_time', limit: 50 }
       )
     ]);
 
     const crises = crisesRes && crisesRes.items ? crisesRes.items : (crisesRes || []);
     const profileList = profilesRes && profilesRes.items ? profilesRes.items : (profilesRes || []);
+    const alerts = alertsRes && alertsRes.items ? alertsRes.items : (alertsRes || []);
 
     return Response.json({
       patient_name: link.patient_name || 'Paciente',
       main_user_email: link.main_user_email || '',
       crises,
-      medical_profile: profileList[0] || null
+      medical_profile: profileList[0] || null,
+      alerts
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

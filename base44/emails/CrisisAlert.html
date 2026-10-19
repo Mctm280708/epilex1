@@ -1,0 +1,61 @@
+<mjml>
+  <mj-head>
+    <mj-title>Alerta EPILEX: crise detectada</mj-title>
+    <mj-preview>Alerta de crise epiléptica detectada pela pulseira EPILEX</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Segoe UI, Arial, sans-serif" />
+      <mj-section background-color="#ffffff" padding="0 36px" />
+      <mj-text color="#231d1a" font-size="15px" line-height="1.6" padding="0" />
+      <mj-button background-color="#f45525" border-radius="14px" font-weight="700" inner-padding="14px 28px" align="left" color="#000000" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#fdfaf7">
+    <mj-section background-color="#f45525" padding="20px 36px">
+      <mj-column>
+        <mj-image src="https://media.base44.com/images/public/6aa0514d0933e55fa69afb6b/e11e88eba_logo.png" width="120px" alt="EPILEX" />
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="36px 36px 12px">
+      <mj-column>
+        <mj-text font-size="28px" font-weight="800" line-height="1.2" color="#231d1a">Alerta de crise detectada</mj-text>
+        <mj-text color="#766860" font-size="15px" padding-top="8px">Você recebeu este alerta como {{recipient_role}} de {{patient_name}}.</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="12px 36px">
+      <mj-column background-color="#ffffff" border-radius="14px" padding="24px">
+        <mj-text>
+          <strong>Paciente:</strong> {{patient_name}}<br/>
+          <strong>Severidade:</strong> {{severity}}<br/>
+          <strong>Data e hora:</strong> {{date_time}}<br/>
+          <strong>Localização:</strong> {{location}}<br/>
+          <strong>Mensagem:</strong> {{alert_message}}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="12px 36px 24px">
+      <mj-column>
+        <mj-button href="{{app_url}}">Acompanhar no EPILEX</mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="0 36px 24px">
+      <mj-column background-color="#fff7f3" border="1px solid #f45525" border-radius="14px" padding="20px">
+        <mj-text font-size="13px" color="#766860">
+          <strong>Procedimentos de emergência:</strong> Mantenha a calma, proteja a cabeça do paciente, não introduza objetos na boca, vire o paciente de lado após a crise e acione o SAMU (192) se a crise durar mais de 5 minutos.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#231d1a" padding="20px 36px">
+      <mj-column>
+        <mj-text color="#766860" font-size="11px" align="center">
+          EPILEX WEB. Sistema de monitoramento de crises epilépticas.<br/>
+          Este alerta foi enviado automaticamente pela pulseira EPILEX.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useBracelet } from "@/components/BraceletStatus";
-import { Plus, Trash2, Phone, User, Mail, X, Watch, Vibrate, ShieldAlert, Link2, LogOut, Copy, Check, RefreshCw } from "lucide-react";
+import { Plus, Trash2, Phone, User, Mail, X, Watch, Vibrate, ShieldAlert, Link2, LogOut, Copy, Check, RefreshCw, UserCheck, Ban } from "lucide-react";
 
 export default function Configuracao() {
   const { connected, toggle } = useBracelet();
@@ -66,6 +66,26 @@ export default function Configuracao() {
 
   const formattedCode = linkCode ? (linkCode.length === 6 ? linkCode.slice(0,3) + "-" + linkCode.slice(3) : linkCode) : null;
 
+  const [linkedContacts, setLinkedContacts] = useState([]);
+  const [revoking, setRevoking] = useState(false);
+
+  const loadLinked = useCallback(async () => {
+    try {
+      const res = await base44.entities.Linkage.filter({ status: "active" }, { limit: 10 });
+      setLinkedContacts(res?.items || res || []);
+    } catch (e) { setLinkedContacts([]); }
+  }, []);
+  useEffect(() => { loadLinked(); }, [loadLinked]);
+
+  const revoke = async () => {
+    if (!confirm("Tem certeza que deseja revogar o acesso do contato de emergência? Ele deixará de ver seus dados imediatamente.")) return;
+    setRevoking(true);
+    try {
+      await base44.functions.invoke("revokeContact");
+      setLinkedContacts([]);
+    } catch (e) {} finally { setRevoking(false); }
+  };
+
   return (
     <div className="px-5 py-5">
       <h1 className="text-2xl font-extrabold tracking-tight">Configurações</h1>
@@ -121,6 +141,32 @@ export default function Configuracao() {
             className="mt-3 w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-primary-foreground disabled:opacity-50">
             {generating ? "Gerando..." : "Gerar código de vinculação"}
           </button>
+        )}
+      </Section>
+
+      <Section title="Contatos vinculados" icon={UserCheck}>
+        {linkedContacts.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+            Nenhum contato de emergência vinculado no momento.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {linkedContacts.map((l) => (
+              <div key={l.id} className="flex items-center gap-3 rounded-xl border border-border p-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                  <UserCheck className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold">{l.contact_email || "Contato vinculado"}</p>
+                  <p className="text-[11px] text-emerald-600">Acesso ativo</p>
+                </div>
+              </div>
+            ))}
+            <button onClick={revoke} disabled={revoking}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 py-2.5 text-sm font-bold text-destructive disabled:opacity-50">
+              <Ban className="h-4 w-4" /> {revoking ? "Revogando..." : "Revogar acesso"}
+            </button>
+          </div>
         )}
       </Section>
 

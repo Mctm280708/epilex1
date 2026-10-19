@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44, notifyEmergencyContacts } from "@/api/base44Client";
 import { Link, useNavigate } from "react-router-dom";
-import { AlertTriangle, ChevronRight, Activity, Calendar, TrendingUp, Zap } from "lucide-react";
+import { AlertTriangle, ChevronRight, Activity, Calendar, TrendingUp, Zap, Bell } from "lucide-react";
 import HeartRateMonitor from "@/components/HeartRateMonitor";
 import { useBracelet } from "@/components/BraceletStatus";
 import CrisisCard from "@/components/CrisisCard";
+import AlertCenter from "@/components/AlertCenter";
 import moment from "moment";
 
 export default function Home() {
@@ -27,6 +28,12 @@ export default function Home() {
 
   useEffect(() => { load(); }, [load]);
 
+  // Realtime: refresh crisis list when a new crisis is created/updated
+  useEffect(() => {
+    const unsub = base44.entities.CrisisEvent.subscribe(() => load());
+    return unsub;
+  }, [load]);
+
   useEffect(() => {
     base44.functions.invoke("getMyRole")
       .then((r) => { if (r?.data?.role === "contact") navigate("/contato", { replace: true }); })
@@ -40,15 +47,27 @@ export default function Home() {
     const avg = 95 + Math.floor(Math.random() * 25);
     const intensities = ["leve", "moderada", "intensa"];
     const movements = ["baixa", "média", "alta"];
-    await base44.entities.CrisisEvent.create({
+    const severity = intensities[Math.floor(Math.random() * 3)];
+    const crisis = await base44.entities.CrisisEvent.create({
       date_time: new Date().toISOString(),
       duration_seconds: duration,
       heart_rate_avg: avg,
       heart_rate_peak: peak,
       movement_intensity: movements[Math.floor(Math.random() * 3)],
-      intensity: intensities[Math.floor(Math.random() * 3)],
+      intensity: severity,
       location: "Gama, DF",
     });
+    // Send alert simultaneously to patient and all linked emergency contacts
+    try {
+      await notifyEmergencyContacts({
+        crisis_id: crisis?.id || null,
+        severity,
+        message: `Crise ${severity} detectada pela pulseira EPILEX. FC média: ${avg} bpm, pico: ${peak} bpm.`,
+        location: "Gama, DF",
+        date_time: crisis?.date_time || new Date().toISOString(),
+        alert_type: "crise_detectada"
+      });
+    } catch (e) {}
     await load();
     setSimulating(false);
   };
@@ -118,6 +137,14 @@ export default function Home() {
         <AlertTriangle className="h-4 w-4" />
         {simulating ? "Registrando..." : "Simular detecção de crise"}
       </button>
+
+      <div className="mt-5 flex items-center justify-between">
+        <h2 className="text-base font-bold">Central de alertas</h2>
+        <Bell className="h-4 w-4 text-muted-foreground" />
+      </div>
+      <div className="mt-3">
+        <AlertCenter max={5} />
+      </div>
     </div>
   );
 }

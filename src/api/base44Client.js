@@ -10,3 +10,13 @@ export const base44 = createClient({
   serverUrl: '',
   appBaseUrl
 });
+
+// Send a crisis alert to the patient's single linked emergency contact.
+export async function notifyEmergencyContact(data) {
+  return base44.functions.invoke('sendCrisisAlert', data);
+}
+
+// Send a crisis alert to the patient and all linked emergency contacts simultaneously.
+export async function notifyEmergencyContacts(data) {
+  return base44.functions.invoke('sendCrisisAlert', data);
+}

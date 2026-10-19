@@ -3,10 +3,11 @@ import { base44 } from "@/api/base44Client";
 import { useNavigate, Link } from "react-router-dom";
 import {
   HeartPulse, MapPin, LogOut, Droplet, Scale, Ruler, Pill, Activity, LifeBuoy,
-  ShieldAlert, User, Loader2, Calendar,
+  ShieldAlert, User, Loader2, Calendar, Bell,
 } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import CrisisCard from "@/components/CrisisCard";
+import AlertCenter from "@/components/AlertCenter";
 import moment from "moment";
 
 export default function ContatoDashboard() {
@@ -16,18 +17,23 @@ export default function ContatoDashboard() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    (async () => {
+    let active = true;
+    const fetchData = async () => {
       try {
         const roleRes = await base44.functions.invoke("getMyRole");
         if (roleRes?.data?.role !== "contact") { navigate("/", { replace: true }); return; }
         const res = await base44.functions.invoke("getLinkedPatientData");
-        setData(res.data);
+        if (active) setData(res.data);
       } catch (e) {
-        setError("Você não tem permissão para acessar os dados do paciente.");
+        if (active) setError("Você não tem permissão para acessar os dados do paciente.");
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
-    })();
+    };
+    fetchData();
+    // Poll for realtime sync (contact cannot subscribe to patient's entities directly due to RLS)
+    const interval = setInterval(fetchData, 30000);
+    return () => { active = false; clearInterval(interval); };
   }, [navigate]);
 
   if (loading) {
@@ -48,7 +54,7 @@ export default function ContatoDashboard() {
     );
   }
 
-  const { patient_name, main_user_email, crises = [], medical_profile } = data;
+  const { patient_name, main_user_email, crises = [], medical_profile, alerts = [] } = data;
   const lastLocation = crises.find((c) => c.location)?.location || "Indisponível";
   const last7 = Array.from({ length: 7 }, (_, i) => {
     const day = moment().subtract(6 - i, "days");
@@ -125,6 +131,14 @@ export default function ContatoDashboard() {
 
           <div className="mt-3 space-y-3">
             {crises.map((c) => <CrisisCard key={c.id} crisis={c} />)}
+          </div>
+
+          <div className="mt-5 flex items-center justify-between">
+            <h2 className="text-base font-bold">Central de alertas</h2>
+            <Bell className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="mt-3">
+            <AlertCenter alerts={alerts} max={5} />
           </div>
 
           <h2 className="mb-2 mt-6 text-base font-bold">Dados de saúde</h2>
