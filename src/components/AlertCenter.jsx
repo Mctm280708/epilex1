@@ -4,9 +4,9 @@ import { Bell, AlertTriangle, MapPin } from "lucide-react";
 import moment from "moment";
 
 const SEVERITY_STYLES = {
-  leve: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  moderada: "bg-orange-50 text-orange-700 border-orange-200",
-  intensa: "bg-red-50 text-red-700 border-red-200",
+  leve: "border-emerald-200 bg-emerald-50/60 text-emerald-700",
+  moderada: "border-primary/20 bg-primary/5 text-primary",
+  intensa: "border-destructive/30 bg-destructive/5 text-destructive",
 };
 
 export default function AlertCenter({ alerts: propAlerts, max = 5 }) {
@@ -27,7 +27,6 @@ export default function AlertCenter({ alerts: propAlerts, max = 5 }) {
 
   useEffect(() => { load(); }, [load]);
 
-  // Realtime subscription (patient mode only; contact receives propAlerts from polling)
   useEffect(() => {
     if (propAlerts) return;
     const unsub = base44.entities.Alert.subscribe(() => load());
@@ -58,11 +57,11 @@ export default function AlertCenter({ alerts: propAlerts, max = 5 }) {
                 <AlertTriangle className="h-4 w-4 shrink-0" />
                 <span className="text-sm font-bold capitalize">{a.severity || "Alerta"}</span>
               </div>
-              <span className="text-[10px] text-muted-foreground">{moment(a.date_time).fromNow()}</span>
+              <span className="text-[10px] opacity-70">{moment(a.date_time).fromNow()}</span>
             </div>
-            <p className="mt-1 text-xs">{a.message}</p>
+            <p className="mt-1 text-xs opacity-90">{a.message}</p>
             {a.location && (
-              <div className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground">
+              <div className="mt-1 flex items-center gap-1 text-[11px] opacity-70">
                 <MapPin className="h-3 w-3" /> {a.location}
               </div>
             )}

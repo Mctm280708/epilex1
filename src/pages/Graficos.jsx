@@ -45,7 +45,7 @@ export default function Graficos() {
   const intensityDist = ["leve", "moderada", "intensa"].map((k, i) => ({
     name: k,
     value: crises.filter((c) => c.intensity === k).length,
-    color: ["#10b981", "#f59e0b", "#ef4444"][i],
+    color: ["#10b981", "hsl(var(--primary))", "#ef4444"][i],
   })).filter((d) => d.value > 0);
 
   return (
@@ -53,7 +53,7 @@ export default function Graficos() {
       <h1 className="text-2xl font-extrabold tracking-tight">Gráficos</h1>
       <p className="text-sm text-muted-foreground">Acompanhe a evolução das crises</p>
 
-      <div className="mt-4 grid grid-cols-2 gap-2 rounded-2xl bg-muted p-1">
+      <div className="mt-4 grid grid-cols-2 gap-2 rounded-2xl border border-border bg-muted/60 p-1">
         {[
           { k: "historico", l: "Histórico" },
           { k: "semanal", l: "Semanal" },
@@ -132,7 +132,7 @@ export default function Graficos() {
                 <XAxis dataKey="label" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid hsl(var(--border))" }} />
-                <Line type="monotone" dataKey="avgFc" stroke="#f97316" strokeWidth={3} dot={{ r: 4, fill: "#f97316" }} />
+                <Line type="monotone" dataKey="avgFc" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4, fill: "hsl(var(--primary))" }} />
               </LineChart>
             </ResponsiveContainer>
           </ChartCard>

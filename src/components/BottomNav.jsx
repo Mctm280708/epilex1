@@ -11,7 +11,7 @@ const items = [
 
 export default function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 border-t border-border/70 bg-background/90 backdrop-blur-xl">
+    <nav className="fixed bottom-0 left-1/2 z-30 w-full max-w-md -translate-x-1/2 border-t border-border/60 bg-card/90 backdrop-blur-xl">
       <div className="flex items-stretch justify-around px-2 py-1.5">
         {items.map(({ to, label, icon: Icon, end }) => (
           <NavLink

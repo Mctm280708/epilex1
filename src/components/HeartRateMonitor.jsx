@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { HeartPulse } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, YAxis } from "recharts";
 import { useBracelet } from "@/components/BraceletStatus";
+import { EEGWave } from "@/components/NeuroPattern";
 
 export default function HeartRateMonitor() {
   const { connected } = useBracelet();
@@ -25,19 +26,23 @@ export default function HeartRateMonitor() {
   }, [connected]);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary to-orange-500 p-5 text-white shadow-xl shadow-primary/25">
-      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10 blur-xl" />
+    <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-secondary via-[#0d2a3e] to-[#0a1f2e] p-5 text-white shadow-xl shadow-secondary/30">
+      {/* Decorative neural lines */}
+      <div className="pointer-events-none absolute inset-0 opacity-10">
+        <EEGWave className="absolute bottom-0 left-0 h-12 w-full" color="#ffffff" strokeWidth={1} />
+      </div>
+      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/10 blur-2xl" />
       <div className="relative flex items-start justify-between">
         <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-white/80">Frequência cardíaca</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-white/60">Frequência cardíaca</p>
           <div className="mt-1 flex items-end gap-1.5">
             <span className="text-5xl font-extrabold tabular-nums tracking-tight">{connected ? bpm : "--"}</span>
-            <span className="mb-1.5 text-sm font-semibold text-white/80">bpm</span>
+            <span className="mb-1.5 text-sm font-semibold text-white/60">bpm</span>
           </div>
-          <p className="mt-0.5 text-[11px] text-white/70">{connected ? "Monitoramento em tempo real" : "Pulseira desconectada"}</p>
+          <p className="mt-0.5 text-[11px] text-white/50">{connected ? "Monitoramento em tempo real" : "Pulseira desconectada"}</p>
         </div>
-        <div className="relative flex h-12 w-12 items-center justify-center text-white">
-          {connected && <span className="pulse-ring absolute inset-0 text-white/40" />}
+        <div className="relative flex h-12 w-12 items-center justify-center text-primary">
+          {connected && <span className="pulse-ring absolute inset-0 text-primary/40" />}
           <HeartPulse className={`relative h-7 w-7 ${connected ? "animate-pulse" : "opacity-50"}`} />
         </div>
       </div>
@@ -46,11 +51,11 @@ export default function HeartRateMonitor() {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={history} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
               <YAxis domain={[40, 160]} hide />
-              <Line type="monotone" dataKey="v" stroke="rgba(255,255,255,0.9)" strokeWidth={2.5} dot={false} isAnimationActive={false} />
+              <Line type="monotone" dataKey="v" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={false} isAnimationActive={false} />
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-white/60">Conecte a pulseira para iniciar o monitoramento</div>
+          <div className="flex h-full items-center justify-center text-xs text-white/40">Conecte a pulseira para iniciar o monitoramento</div>
         )}
       </div>
     </div>

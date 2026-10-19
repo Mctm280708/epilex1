@@ -4,15 +4,15 @@ import moment from "moment";
 
 const intensityStyle = {
   leve: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  moderada: "bg-amber-50 text-amber-700 border-amber-200",
-  intensa: "bg-red-50 text-red-700 border-red-200",
+  moderada: "bg-primary/8 text-primary border-primary/20",
+  intensa: "bg-destructive/5 text-destructive border-destructive/30",
 };
 
 export default function CrisisCard({ crisis }) {
   const mins = Math.floor((crisis.duration_seconds || 0) / 60);
   const secs = (crisis.duration_seconds || 0) % 60;
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm shadow-secondary/5">
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold text-muted-foreground">
           {moment(crisis.date_time).format("DD/MM/YYYY [às] HH:mm")}
