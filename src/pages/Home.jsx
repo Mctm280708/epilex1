@@ -3,6 +3,7 @@ import { base44, notifyEmergencyContacts } from "@/api/base44Client";
 import { Link, useNavigate } from "react-router-dom";
 import { AlertTriangle, ChevronRight, Activity, Calendar, TrendingUp, Zap, Bell } from "lucide-react";
 import HeartRateMonitor from "@/components/HeartRateMonitor";
+import SensorPanel from "@/components/SensorPanel";
 import { useBracelet } from "@/components/BraceletStatus";
 import CrisisCard from "@/components/CrisisCard";
 import AlertCenter from "@/components/AlertCenter";
@@ -83,6 +84,10 @@ export default function Home() {
       </div>
 
       <HeartRateMonitor />
+
+      <div className="mt-4">
+        <SensorPanel />
+      </div>
 
       <div className="mt-4 flex items-center justify-between rounded-2xl border border-border bg-card p-4">
         <div className="flex items-center gap-3">
