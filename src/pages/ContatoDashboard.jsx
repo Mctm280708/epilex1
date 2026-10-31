@@ -8,6 +8,7 @@ import {
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import CrisisCard from "@/components/CrisisCard";
 import AlertCenter from "@/components/AlertCenter";
+import FirstAidGuide from "@/components/FirstAidGuide";
 import NeuroBackground, { EEGWave } from "@/components/NeuroPattern";
 import moment from "moment";
 
@@ -16,6 +17,19 @@ export default function ContatoDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [emergency, setEmergency] = useState(false);
+
+  const triggerEmergency = async () => {
+    setEmergency(true);
+    try {
+      await base44.functions.invoke("triggerContactEmergency", {
+        severity: "intensa",
+        message: "Acionamento de emergência pelo contato de emergência via EPILEX.",
+        location: "Gama, DF",
+      });
+    } catch (e) {}
+    setEmergency(false);
+  };
 
   useEffect(() => {
     let active = true;
@@ -163,6 +177,23 @@ export default function ContatoDashboard() {
               O paciente ainda não cadastrou suas informações de saúde.
             </p>
           )}
+
+          <div className="mt-5 rounded-2xl border border-white/10 bg-white/95 p-4 shadow-lg shadow-black/5">
+            <div className="mb-3 flex items-center gap-2">
+              <LifeBuoy className="h-4 w-4 text-primary" />
+              <h2 className="text-sm font-bold text-foreground">Primeiros socorros</h2>
+            </div>
+            <FirstAidGuide />
+          </div>
+
+          <button
+            onClick={triggerEmergency}
+            disabled={emergency}
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-red-400/50 bg-red-500/10 py-3.5 text-sm font-bold text-destructive transition-colors hover:bg-red-500/15 disabled:opacity-50"
+          >
+            <ShieldAlert className="h-4 w-4" />
+            {emergency ? "Acionando..." : "Acionar emergência"}
+          </button>
 
           <p className="mt-5 text-center text-[11px] text-white/40">
             Você está visualizando os dados compartilhados pelo paciente. EPILEX WEB é um protótipo e não substitui atendimento médico.

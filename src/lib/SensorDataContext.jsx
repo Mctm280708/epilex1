@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 
-export function useSensorData(intervalMs = 2000) {
+const SensorDataContext = createContext(null);
+
+export function SensorDataProvider({ children }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,14 +26,28 @@ export function useSensorData(intervalMs = 2000) {
   useEffect(() => {
     mountedRef.current = true;
     fetchSensorData();
-    const id = setInterval(fetchSensorData, intervalMs);
+    const id = setInterval(fetchSensorData, 2000);
     return () => {
       mountedRef.current = false;
       clearInterval(id);
     };
-  }, [fetchSensorData, intervalMs]);
+  }, [fetchSensorData]);
 
-  return { data, loading, error, refresh: fetchSensorData };
+  const connected = !!data && !error;
+
+  return (
+    <SensorDataContext.Provider value={{ data, loading, error, connected, refresh: fetchSensorData }}>
+      {children}
+    </SensorDataContext.Provider>
+  );
 }
 
-export default useSensorData;
+export function useSensorData() {
+  const ctx = useContext(SensorDataContext);
+  if (!ctx) {
+    return { data: null, loading: false, error: "Sensor provider não disponível", connected: false, refresh: async () => {} };
+  }
+  return ctx;
+}
+
+export default SensorDataContext;

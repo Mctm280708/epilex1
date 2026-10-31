@@ -1,5 +1,5 @@
 import React from "react";
-import { useSensorData } from "@/hooks/useSensorData";
+import { useSensorData } from "@/lib/SensorDataContext";
 import { Activity, Loader2, AlertCircle, Move3d, RotateCw, Footprints } from "lucide-react";
 
 function fmtVal(v) {

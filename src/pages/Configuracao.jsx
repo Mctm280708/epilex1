@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useBracelet } from "@/components/BraceletStatus";
-import { Plus, Trash2, Phone, User, Mail, X, Watch, Vibrate, ShieldAlert, Link2, LogOut, Copy, Check, RefreshCw, UserCheck, Ban } from "lucide-react";
+import { Plus, Trash2, Phone, User, Mail, X, Watch, Wifi, Vibrate, ShieldAlert, Link2, LogOut, Copy, Check, RefreshCw, UserCheck, Ban } from "lucide-react";
 
 export default function Configuracao() {
-  const { connected, toggle } = useBracelet();
+  const { connected } = useBracelet();
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -92,10 +92,15 @@ export default function Configuracao() {
       <p className="text-sm text-muted-foreground">Gerencie pulseira, contatos e preferências</p>
 
       <Section title="Pulseira inteligente" icon={Watch}>
-        <Row label="Status da conexão" value={connected ? "Conectada" : "Desconectada"} />
-        <button onClick={toggle} className="w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-primary-foreground">
-          {connected ? "Desconectar pulseira" : "Conectar via Bluetooth"}
-        </button>
+        <div className="flex items-center gap-3">
+          <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${connected ? "bg-emerald-50 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
+            <Wifi className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-bold">Status da conexão</p>
+            <p className="text-[11px] text-muted-foreground">{connected ? "Conectada via Wi-Fi" : "Desconectada"}</p>
+          </div>
+        </div>
       </Section>
 
       <Section title="Preferências de alerta" icon={Vibrate}>

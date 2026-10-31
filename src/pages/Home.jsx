@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { base44, notifyEmergencyContacts } from "@/api/base44Client";
 import { Link, useNavigate } from "react-router-dom";
-import { AlertTriangle, ChevronRight, Activity, Calendar, TrendingUp, Zap, Bell } from "lucide-react";
+import { AlertTriangle, ChevronRight, Activity, Calendar, TrendingUp, Bell } from "lucide-react";
 import HeartRateMonitor from "@/components/HeartRateMonitor";
 import SensorPanel from "@/components/SensorPanel";
-import { useBracelet } from "@/components/BraceletStatus";
 import CrisisCard from "@/components/CrisisCard";
 import AlertCenter from "@/components/AlertCenter";
 import moment from "moment";
 
 export default function Home() {
-  const { connected, toggle } = useBracelet();
   const [crises, setCrises] = useState([]);
   const [loading, setLoading] = useState(true);
   const [simulating, setSimulating] = useState(false);
@@ -87,26 +85,6 @@ export default function Home() {
 
       <div className="mt-4">
         <SensorPanel />
-      </div>
-
-      <div className="mt-4 flex items-center justify-between rounded-2xl border border-border bg-card p-4">
-        <div className="flex items-center gap-3">
-          <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${connected ? "bg-emerald-50 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
-            {connected ? <Zap className="h-5 w-5" /> : <Activity className="h-5 w-5" />}
-          </div>
-          <div>
-            <p className="text-sm font-bold">Pulseira EPILEX</p>
-            <p className="text-[11px] text-muted-foreground">{connected ? "Conectada · monitorando" : "Desconectada"}</p>
-          </div>
-        </div>
-        <button
-          onClick={toggle}
-          className={`rounded-full px-4 py-1.5 text-xs font-bold transition-colors ${
-            connected ? "bg-muted text-foreground" : "bg-primary text-primary-foreground"
-          }`}
-        >
-          {connected ? "Desconectar" : "Conectar"}
-        </button>
       </div>
 
       <div className="mt-4 grid grid-cols-3 gap-3">
