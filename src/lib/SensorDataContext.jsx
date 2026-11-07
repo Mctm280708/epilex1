@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+
+const FIREBASE_URL = "https://dourado-3e4ed-default-rtdb.firebaseio.com";
+const SENSOR_PATH = "eplex/ultima_leitura";
 
 const SensorDataContext = createContext(null);
 
@@ -11,9 +13,12 @@ export function SensorDataProvider({ children }) {
 
   const fetchSensorData = useCallback(async () => {
     try {
-      const res = await base44.functions.invoke("getSensorData");
+      const res = await fetch(`${FIREBASE_URL}/${SENSOR_PATH}.json`, { cache: "no-store" });
+      if (!res.ok) throw new Error(`Firebase retornou ${res.status}`);
+      const json = await res.json();
+      if (!json) throw new Error("Nenhum dado encontrado no Firebase");
       if (!mountedRef.current) return;
-      setData(res?.data ?? null);
+      setData(json);
       setError(null);
     } catch (e) {
       if (!mountedRef.current) return;
